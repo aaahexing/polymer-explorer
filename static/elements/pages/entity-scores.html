@@ -1,0 +1,384 @@
+<script src="../../scripts/util.js"></script>
+
+<dom-module id="element-card">
+<style>
+    :host {
+        display: block;
+        width: calc(33% - 20px);
+        min-width: 220px;
+        margin: 10px;
+        cursor: pointer;
+        transition: box-shadow 0.1s;
+    }
+    
+    :host(:hover) {
+        @apply(--shadow-elevation-2dp);
+    }
+    
+    #content {
+        background: white;
+        border-radius: 3px;
+        border: 1px solid #e5e5e5;
+    }
+    
+    h3 {
+        font-size: 16px;
+        font-weight: 500;
+        margin: 0;
+        padding: 10px 16px 0;
+    }
+    
+    p {
+        margin: 0;
+    }
+    
+    #el {
+        cursor: pointer;
+    }
+    
+    #el-graphic {
+        position: relative;
+        width: 100%;
+        height: 20px;
+        background: #ccc;
+        border-radius: 3px 3px 0 0;
+        overflow: hidden;
+        border-bottom: 1px solid #e5e5e5;
+    }
+    
+    #el-graphic hero-image {
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        bottom: 8px;
+        right: 8px;
+        opacity: 0.85;
+    }
+    
+    #el-package package-symbol {
+        margin: 0 15px 0 0;
+    }
+    
+    .meta {
+        @apply(--paper-font-caption);
+        border-top: 1px solid;
+        border-bottom: 1px solid;
+        border-color: var(--divider-color);
+        padding: 10px 16px;
+    }
+    
+    .meta + .meta {
+        border-top: 0;
+    }
+    
+    .meta:last-child {
+        border-bottom: 0;
+    }
+    
+    element-action-menu {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        height: 64px;
+        padding: 10px 16px;
+        background: rgba(255,255,255,0.95);
+        box-sizing: border-box;
+    }
+    
+    @media (min-width: 840px) {
+        element-action-menu {
+            transform: translate(0, 20px);
+            transition: var(--material-curve-320);
+            opacity: 0;
+            visibility: hidden;
+        }
+    }
+    
+    @media (max-width: 839px) {
+        #el-graphic {
+            height: 210px !important;
+        }
+        #el-graphic hero-image {
+            bottom: 64px !important;
+        }
+    }
+    
+    #el-graphic:hover element-action-menu {
+        visibility: visible;
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+    
+    #el-desc {
+        @apply(--paper-font-body1);
+        color: var(--secondary-text-color);
+        margin: 0;
+        padding: 10px 16px;
+        height: 75px;
+    }
+    
+    #el-package {
+        font-weight: 500;
+    }
+    
+    #el-tags iron-icon {
+        margin: 0 5px 0 0;
+        padding: 5px;
+        color: var(--secondary-text-color);
+        --iron-icon-size: 18px;
+    }
+    
+    #el-tags tag-link {
+        margin-right: 4px;
+    }
+    
+    #el-tags tag-link:after {
+        margin-left: -3px;
+        content: ",";
+    }
+    
+    #el-tags tag-link:last-of-type:after {
+        content: "";
+    }
+</style>
+<template>
+<div id="content" class="vertical layout">
+    <div id="el">
+        <div id="el-graphic" themed="">
+        </div>
+        <div id="el-header">
+            <div style="float:left"><h3>[[element.Name]]</h3></div>
+            <div style="float:right"><h3>[[element.Score]]</h3></div>
+        </div>
+    </div>
+    <p id="el-desc">[[element.Description]]</p>
+    <div id="el-tags" class="horizontal layout center meta">
+        <iron-icon icon="label" class="flex-none"></iron-icon>
+        <span class="horizontal layout wrap flex">
+            <template is="dom-repeat" items="[[element.Labels]]">
+                <tag-link name=[[item]]></tag-link>
+            </template>
+        </span>
+    </div>
+</div>
+</template>
+<script>
+    (function() {
+        Polymer({
+            is: 'element-card',
+        });
+    })();
+</script>
+</dom-module>
+
+<dom-module id="tag-link">
+<style>
+    :host, a {
+        display: inline-block;
+        cursor: pointer;
+        color: #606060;
+    }
+    
+    :host(:hover) span {
+        text-decoration: underline;
+    }
+    
+    span {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--primary-text-color);
+        text-decoration: none;
+    }
+</style>
+<template>
+    <span>{{name}}</span>
+</template>
+<script>
+    (function() {
+        Polymer({
+            is: 'tag-link'
+        });
+    })();
+</script>
+</dom-module>
+
+<!--
+-->
+<dom-module id="build-input-panel">
+<style>
+    :host {
+        display: block;
+    }
+
+    paper-input {
+        padding: 10px
+    }
+</style>
+<template>
+    <div class="layout horizontal center self-stretch"> 
+        <div class="flex">
+            <paper-input required label="path" value="{{path}}">
+            </paper-input></div>
+        <div>
+            <paper-input required label="mid" value="{{mid}}">
+            </paper-input></div>
+    </div>
+    <iron-ajax
+        auto
+        url="/buildList/"
+        params=''
+        handle-as="json"
+        on-response="handleBuildList"
+        debounce-duration="1000"></iron-ajax>
+</template>
+<script>
+    (function() {
+        Polymer({
+            is: 'build-input-panel',
+            properties: {
+                path: {
+                    type: String,
+                    notify: true
+                },
+                mid: {
+                    type: String,
+                    notify: true
+                }
+            },
+            handleBuildList: function(e) {
+                var buildList = e.detail.response;
+                // Set the default value of the build.
+                if (this.path == null || !this.path.trim()) {
+                    this.path = buildList[buildList.length - 1];
+                }
+                if (this.mid == null || !this.mid.trim()) {
+                    this.mid = '/m/02mjmr';
+                }
+                console.log('Build list got! -> ', buildList);
+            }
+        });
+    })();
+</script>
+</dom-module>
+
+<dom-module id="ajax-element">
+<template>
+    <iron-ajax
+        id="ajax"
+        url="{{url}}"
+        method="post"
+        handle-as="{{handleAs}}"
+        on-response="handleResponse"></iron-ajax>
+</template>
+<script>
+    (function() {
+        Polymer({
+            is: 'ajax-element',
+            properties: {
+                url: {
+                    type: String,
+                    notify: true
+                }
+            },
+            run: function() {
+                var body = [];
+                for (var param in this.params) {
+                    var value = this.params[param];
+                    console.log(param, " = ", value);
+                    if (typeof value == 'object') {
+                        value = JSON.stringify(value);
+                    }
+                    body  = body.concat(param + '=' + value);
+                }
+                console.log("body = ", body);
+                this.$.ajax.body = body.join('&');
+                this.$.ajax.generateRequest();
+            },
+            handleResponse: function(e) {
+                console.log('Response : ', e);
+                var data = e.detail.response;
+                // <nil> is a null error in go code.
+                if (!data || (data.Err && data.Err != '<nil>')) {
+                  return;
+                }
+                this.fire('response', {response: data});                
+            }
+        });
+    })();
+</script>
+</dom-module>
+
+<!--
+-->
+<dom-module id="entity-scores">
+<style>
+    :host {
+        display: block;
+    }
+
+    @media (max-width: 600px) {
+        h1.paper-font-display1 {
+            font-size: 24px;
+        }
+    }
+</style>
+<template>
+    <ajax-element
+        id="ajax"
+        url="/entityScores/"
+        handleAs="json"
+        on-response="handleEntityScores"
+    ></ajax-element>
+    <div class="layout horizontal center self-stretch" style="padding:0px 0px 80px">
+        <div class="flex">
+        <build-input-panel path="{{path}}" mid="{{mid}}"></build-input-panel>
+        </div>
+        <div>
+        <paper-button raised id="submitToggle" on-click="handleSubmit">
+            Submit
+        </paper-button>
+        </div>
+    </div>
+    <div id="element-cards" class="layout horizontal wrap justified">
+        <template is="dom-repeat" items="[[results]]">
+            <element-card element="[[item]]"><element-card>
+        </template>
+    </div>
+</template>
+<script>
+    (function() {
+        Polymer({
+            is: 'entity-scores',
+            properties: {
+                results: {
+                    type: Array,
+                }
+            },
+            ready: function() {
+                this.results = []
+                app.route = 'entity-scores';
+                app.params = util.parseQueryString(app.route, window.location.hash);
+            },
+            updateHash: function() {
+                var hash = "path=" + this.path + "&mid=" + this.mid;
+                hash = encodeURIComponent(hash);
+                window.location.hash = "#!/entity-scores/" + hash;
+                console.log('Hash changed to: ', window.location.hash);
+            },
+            handleSubmit: function() {
+                this.updateHash();
+                this.results = []
+                this.$.ajax.params = {
+                    path: this.path,
+                    mid: this.mid
+                };
+                this.$.ajax.run();
+            },
+            handleEntityScores: function(e) {
+                var entityScores = e.detail.response;
+                this.results = entityScores.Results;
+            }
+        });
+    })();
+</script>
+</dom-module>

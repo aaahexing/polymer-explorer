@@ -1,0 +1,108 @@
+/*
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+*/
+
+body {
+  background: #fafafa;
+  font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #333;
+}
+
+/* ==========================================================================
+   Card
+   ========================================================================== */
+
+.card {
+    background: #fff;
+    padding: 24px;
+    height: 200px;
+    margin-bottom: 28px;
+    position: relative;
+    cursor: pointer;
+}
+
+.card .card-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  width: auto;
+}
+
+/* Card - Header
+   ========================================================================== */
+
+.card-header .card-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.card-header .card-title a,
+.card-header .card-title a:hover {
+    color: #333;
+}
+
+.card-header .card-subtitle {
+    font-size: 14px;
+    font-weight: 300;
+    margin: 0;
+}
+
+.card-header .card-subtitle a {
+    color: #ff4081;
+    text-decoration: none;
+    font-weight: 400;
+    z-index: 2;
+    position: relative;
+}
+
+.card-header .card-subtitle a:hover {
+    color: #ff4081;
+    text-decoration: underline;
+}
+
+/* Card - Body
+   ========================================================================== */
+
+.card-body .card-description {
+    font-size: 14px;
+    font-weight: 300;
+}
+
+/* Card - Footer
+   ========================================================================== */
+
+.card-footer .card-info-list {
+    margin: 0;
+    position: absolute;
+    bottom: 0;
+    padding: 24px 0;
+}
+
+.card-footer .card-info-item {
+    list-style: none;
+    display: inline-block;
+    margin-right: 24px;
+}
+
+.card-footer .card-info-item .icon-star {
+    color: #fbc02d;
+    font-size: 16px;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+.card-footer .card-info-item .icon-fork {
+    color: #7c949f;
+    font-size: 16px;
+    vertical-align: middle;
+    margin-right: 4px;
+}
